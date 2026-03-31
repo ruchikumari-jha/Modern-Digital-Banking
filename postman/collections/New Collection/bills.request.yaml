@@ -1,0 +1,22 @@
+$kind: http-request
+name: bills
+url: http://127.0.0.1:8000/bills/
+method: POST
+headers:
+  - key: Authorization
+    value: Bearer
+      eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0MTA4LCJleHAiOjE3NzM5MzA0NTIsInR5cGUiOiJyZWZyZXNoIn0.rI6BpcQ7nAIDDPH0PCMqcwm28hu7KVIBYlxShxmNU8Q
+body:
+  type: json
+  content: "{\r
+
+    \ \"biller_name\": \"Electricity Bill\",\r
+
+    \ \"due_date\": \"2026-03-12\",\r
+
+    \ \"amount_due\": 1200,\r
+
+    \ \"auto_pay\": false\r
+
+    }"
+order: 4433669593215286
