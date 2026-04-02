@@ -66,7 +66,7 @@ def check_bill_due(db, user_id):
     return created
 
 # BUDGET ALERT
-def check_and_create_budget_alert(db: Session, account_id: int, category: str):
+def check_and_create_budget_alert(db: Session, user_id: int, category: str):
 
     from app.models.budget import Budget   # local import avoids circular issues
 
@@ -87,8 +87,9 @@ def check_and_create_budget_alert(db: Session, account_id: int, category: str):
     if percentage >= 80:
 
         existing = db.query(Alert).filter(
-            Alert.user_id == budget.user_id,
-            Alert.type == "budget_warning"
+            Alert.user_id == user_id,
+            Alert.type == "budget_warning",
+            Alert.message.contains(category)
         ).first()
 
         if existing:

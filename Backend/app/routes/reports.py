@@ -18,7 +18,7 @@ def get_spending_by_category_report(
     user_id: int = Depends(verify_token),   # 🔐 get token payload
 ):
 
-    # 🔥 Extract user_id from token
+    #  Extract user_id from token
       # or token_data["sub"]
 
     # ---------- Validation ----------

@@ -25,7 +25,7 @@ def get_db():
 
 
 # ==================================================
-# ✅ EXPORT TRANSACTIONS (CSV)
+#  EXPORT TRANSACTIONS (CSV)
 # ==================================================
 @router.get("/transactions")
 def export_transactions(format: str, db: Session = Depends(get_db)):
@@ -63,7 +63,7 @@ def export_transactions(format: str, db: Session = Depends(get_db)):
 
 
 # ==================================================
-# ✅ EXPORT INSIGHTS (PDF)
+#  EXPORT INSIGHTS (PDF)
 # ==================================================
 @router.get("/insights")
 def export_insights(format: str = "pdf", db: Session = Depends(get_db)):

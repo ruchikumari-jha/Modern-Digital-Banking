@@ -29,5 +29,3 @@ def calculate_rewards(db: Session, user_id: int):
         "reward_points": reward_points
     }
 
-def get_rewards_by_user(db: Session, user_id: int):
-    return db.query(Reward).filter(Reward.user_id == user_id).first()

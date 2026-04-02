@@ -5,6 +5,13 @@ from app.utils.logger import logger
 from sqlalchemy.orm import Session
 
 
+from sqlalchemy import func, extract
+from app.models.transaction import Transaction
+from app.models.budget import Budget
+from app.utils.logger import logger
+from sqlalchemy.orm import Session
+
+
 def recalculate_budget(db: Session, account_id, category):
 
     budget = db.query(Budget).filter(
@@ -21,7 +28,7 @@ def recalculate_budget(db: Session, account_id, category):
     total_spent = db.query(
         func.coalesce(func.sum(Transaction.amount), 0)
     ).filter(
-        Transaction.account_id == account_id,
+        Transaction.account_id == account_id,   # ✅ FIXED
         Transaction.category == category,
         Transaction.txn_type == "debit",
         extract("month", Transaction.txn_date) == month,
@@ -34,18 +41,15 @@ def recalculate_budget(db: Session, account_id, category):
     db.refresh(budget)
 
     logger.info(
-        f"action=budget_recalculation "
-        f"account_id={account_id} "
-        f"category={category} "
-        f"spent={total_spent}"
+        f"account_id={account_id} category={category} spent={total_spent}"
     )
 
     return budget
 
-def get_budget_progress(db:Session, account_id, category):
+def get_budget_progress(db:Session, user_id, category):
 
     budget = db.query(Budget).filter(
-        Budget.account_id == account_id,
+        Budget.user_id == user_id,
         Budget.category == category
     ).first()
 

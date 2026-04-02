@@ -18,14 +18,19 @@ router = APIRouter(prefix="/transactions", tags=["Transactions"])
 def get_transactions(
     account_id: int,
     page: int = 1,
-    limit: int = 10,
+    limit: int = 1000,  # ✅ show more data
     search: str | None = None,
     category: str | None = None,
     db: Session = Depends(get_db),
+    current_user=Depends(get_current_user),  # ✅ secure
 ):
     skip = (page - 1) * limit
 
-    query = db.query(Transaction).filter(Transaction.account_id == account_id)
+    # ✅ Ensure user owns this account
+    query = db.query(Transaction).filter(
+        Transaction.account_id == account_id,
+        Transaction.user_id == current_user.id  # 🔥 IMPORTANT
+    )
 
     if search:
         query = query.filter(Transaction.description.ilike(f"%{search}%"))
@@ -35,7 +40,7 @@ def get_transactions(
 
     total = query.count()
 
-    transactions = query.offset(skip).limit(limit).all()
+    transactions = query.order_by(Transaction.txn_date.desc()).offset(skip).limit(limit).all()
 
     return {
         "transactions": transactions,

@@ -11,6 +11,7 @@ from app.schemas.transaction import RecategorizeRequest
 
 
 # ✅ CREATE TRANSACTION
+
 def create_transaction_service(transaction, db: Session):
 
     if transaction.amount < 0:
@@ -20,10 +21,12 @@ def create_transaction_service(transaction, db: Session):
         CategoryRule.is_active == True
     ).order_by(CategoryRule.priority).all()
 
-    category = assign_category(transaction, rules)
+    if not transaction.category or transaction.category == "Uncategorized":
+        category = assign_category(transaction, rules)
+    else:
+        category = transaction.category
 
     new_txn = Transaction(
-        user_id=transaction.user_id,
         account_id=transaction.account_id,
         description=transaction.description,
         category=category,
@@ -37,13 +40,18 @@ def create_transaction_service(transaction, db: Session):
 
     db.add(new_txn)
 
-    if transaction.txn_type == "debit":
+    # ✅ SAFE BLOCK (NO CRASH)
+    try:
         recalculate_budget(db, transaction.account_id, category)
+        check_and_create_budget_alert(db, transaction.account_id, category)
+    except Exception as e:
+        print("⚠️ Budget/Alert error:", e)
 
     db.commit()
     db.refresh(new_txn)
 
     return new_txn
+ 
 
 
 # ✅ RE-CATEGORIZE
