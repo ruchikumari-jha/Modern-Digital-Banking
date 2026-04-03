@@ -40,7 +40,7 @@ export const TransactionProvider = ({ children }) => {
 
         try {
 
-            const accountId = Number(localStorage.getItem("accountID"));
+            const accountId = Number(localStorage.getItem("accountID") || 16);
 
             const params = new URLSearchParams({
                 account_id: accountId,
