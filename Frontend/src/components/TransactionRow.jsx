@@ -1,46 +1,35 @@
 import React, { useState, useCallback, memo, useEffect } from 'react';
-import { Loader2, Check, Save, BookmarkPlus } from 'lucide-react';
+import { 
+    Loader2, Check,
+    Utensils, ShoppingCart, Car, Film, Wallet, HeartPulse, GraduationCap, Wifi, Banknote
+} from 'lucide-react';
 
 const CATEGORIES = [
-    'Food',
-    'Shopping',
-    'Entertainment',
-    'Travel',
-    'Groceries',
-    'Transport',
-    'Bills',
-    'Recharge',
-    'Healthcare',
-    'Education',
-    'Subscriptions',
-    'Investment',
-    'Bank Charges',
-    'Salary',
-    'Transfer',
-    'Others'
+    'Food','Shopping','Entertainment','Travel','Groceries','Transport',
+    'Bills','Recharge','Healthcare','Education','Subscriptions',
+    'Investment','Bank Charges','Salary','Transfer','Others'
 ];
 
-const CATEGORY_COLORS = {
-    Food: 'bg-orange-100 text-orange-700',
-    Transport: 'bg-sky-100 text-sky-700',
-    Groceries: 'bg-green-100 text-green-700',
-    Utilities: 'bg-teal-100 text-teal-700',
-    Entertainment: 'bg-pink-100 text-pink-700',
-    Shopping: 'bg-purple-100 text-purple-700',
-    Healthcare: 'bg-rose-100 text-rose-700',
-    Education: 'bg-cyan-100 text-cyan-700',
-    Salary: 'bg-green-100 text-green-700',
-    Transfer: 'bg-blue-100 text-blue-700',
-    Subscriptions: 'bg-violet-100 text-violet-700',
-    Bills: 'bg-yellow-100 text-yellow-700',
-    Recharge: 'bg-indigo-100 text-indigo-700',
-    Investment: 'bg-emerald-100 text-emerald-700',
-    'Bank Charges': 'bg-gray-200 text-gray-800',
-    Travel: 'bg-blue-100 text-blue-700',
-    Others: 'bg-gray-100 text-gray-700',
-};
-
 const API_BASE_URL = 'http://localhost:8000';
+
+const CATEGORY_ICONS = {
+    Food: Utensils,
+    Shopping: ShoppingCart,
+    Transport: Car,
+    Travel: Car,
+    Entertainment: Film,
+    Salary: Wallet,
+    Investment: Banknote,
+    Healthcare: HeartPulse,
+    Education: GraduationCap,
+    Recharge: Wifi,
+    Bills: Banknote,
+    Transfer: Banknote,
+    Groceries: ShoppingCart,
+    Subscriptions: Film,
+    'Bank Charges': Banknote,
+    Others: Banknote
+};
 
 const TransactionRow = memo(({ transaction, onCategoryUpdated, showToast }) => {
 
@@ -51,7 +40,6 @@ const TransactionRow = memo(({ transaction, onCategoryUpdated, showToast }) => {
     const [justSaved, setJustSaved] = useState(false);
     const [hasChanged, setHasChanged] = useState(false);
 
-    // ✅ Sync backend category
     useEffect(() => {
         const cat = transaction.category || "Others";
         setSelectedCategory(cat);
@@ -73,27 +61,21 @@ const TransactionRow = memo(({ transaction, onCategoryUpdated, showToast }) => {
         setIsSaving(true);
 
         try {
-
             const txnId = transaction.id || transaction._id;
 
             const res = await fetch(`${API_BASE_URL}/transactions/${txnId}/category`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
                 body: JSON.stringify({ category: selectedCategory }),
             });
 
-            if (!res.ok) {
-                throw new Error("Failed to update category");
-            }
+            if (!res.ok) throw new Error("Failed to update category");
 
-            // ✅ Optional rule creation
             if (saveAsRule && transaction.merchant) {
                 try {
                     await fetch(`${API_BASE_URL}/rules`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        credentials: 'include',
                         body: JSON.stringify({
                             type: 'merchant',
                             value: transaction.merchant,
@@ -115,7 +97,7 @@ const TransactionRow = memo(({ transaction, onCategoryUpdated, showToast }) => {
                 onCategoryUpdated(txnId, selectedCategory);
             }
 
-            setTimeout(() => setJustSaved(false), 2500);
+            setTimeout(() => setJustSaved(false), 2000);
 
         } catch (err) {
             showToast('error', err.message || 'Failed to update category.');
@@ -125,69 +107,80 @@ const TransactionRow = memo(({ transaction, onCategoryUpdated, showToast }) => {
 
     }, [isSaving, hasChanged, selectedCategory, saveAsRule, transaction, showToast, onCategoryUpdated]);
 
-    const IconComponent = transaction.icon;
+    const IconComponent = CATEGORY_ICONS[selectedCategory] || Banknote;
 
     return (
-        <tr className={`transition-all duration-300 ${
-            isSaving ? 'bg-blue-50/50'
-            : justSaved ? 'bg-green-50/50'
-            : 'hover:bg-gray-50/80'
-        }`}>
+        <tr>
+            <td colSpan="5" className="px-4 py-2">
 
-            {/* Name */}
-            <td className="px-6 py-4">
-                <div className="flex items-center gap-3">
-                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
-                        transaction.amount > 0 ? 'bg-green-100' : 'bg-gray-100'
+                {/* 💎 CARD ROW */}
+                <div className={`flex items-center justify-between p-4 rounded-2xl border bg-white shadow-sm transition-all duration-300
+                    ${isSaving ? 'bg-blue-50 animate-pulse' : ''}
+                    ${justSaved ? 'bg-green-50' : ''}
+                    hover:shadow-lg hover:-translate-y-1`}>
+
+                    {/* LEFT SECTION */}
+                    <div className="flex items-center gap-4">
+
+                        {/* 🔥 ICON */}
+                        <div className={`w-12 h-12 flex items-center justify-center rounded-2xl
+                            ${transaction.amount > 0 
+                                ? 'bg-green-100 text-green-600' 
+                                : 'bg-gray-100 text-gray-600'}`}>
+                            
+                            <IconComponent className="w-5 h-5" />
+                        </div>
+
+                        {/* TEXT */}
+                        <div>
+                            <p className="font-semibold text-gray-800 text-sm">
+                                {transaction.description}
+                            </p>
+                            <p className="text-xs text-gray-400">
+                                {transaction.posted_date}
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* CATEGORY */}
+                    <select
+                        value={selectedCategory}
+                        onChange={handleCategoryChange}
+                        disabled={isSaving}
+                        className="border border-gray-200 rounded-xl px-3 py-2 text-xs bg-gray-50 focus:ring-2 focus:ring-blue-500"
+                    >
+                        {CATEGORIES.map((c) => (
+                            <option key={c} value={c}>{c}</option>
+                        ))}
+                    </select>
+
+                    {/* AMOUNT */}
+                    <div className={`font-bold text-sm ${
+                        transaction.amount > 0 ? 'text-green-600' : 'text-red-500'
                     }`}>
-                        {IconComponent && (
-                            <IconComponent className={`w-4 h-4 ${
-                                transaction.amount > 0 ? 'text-green-600' : 'text-gray-600'
-                            }`} />
-                        )}
+                        {transaction.amount > 0 ? '+' : '-'}₹{Math.abs(transaction.amount)}
                     </div>
-                    <div>
-                        <span className="font-semibold text-sm">{transaction.description}</span>
-                        <p className="text-xs text-gray-400">{transaction.posted_date}</p>
-                    </div>
+
+                    {/* BUTTON */}
+                    <button
+                        onClick={handleSave}
+                        disabled={!hasChanged || isSaving}
+                        className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all
+                        ${isSaving
+                            ? 'bg-blue-400 text-white'
+                            : justSaved
+                            ? 'bg-green-500 text-white'
+                            : hasChanged
+                            ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                            : 'bg-gray-200 text-gray-500'
+                        }`}
+                    >
+                        {isSaving ? 'Saving...' : justSaved ? 'Saved' : 'Update'}
+                    </button>
+
                 </div>
-            </td>
 
-            {/* Category */}
-            <td className="px-6 py-4">
-                <select
-                    value={selectedCategory}
-                    onChange={handleCategoryChange}
-                    disabled={isSaving}
-                    className="border rounded-xl px-3 py-2 text-xs"
-                >
-                    {CATEGORIES.map((c) => (
-                        <option key={c} value={c}>{c}</option>
-                    ))}
-                </select>
             </td>
-
-            {/* Currency */}
-            <td className="px-6 py-4">
-                {transaction.currency}
-            </td>
-
-            {/* Amount */}
-            <td className="px-6 py-4 text-right font-bold">
-                {transaction.amount > 0 ? '+' : ''}₹{Math.abs(transaction.amount)}
-            </td>
-
-            {/* Action */}
-            <td className="px-6 py-4 text-right">
-                <button
-                    onClick={handleSave}
-                    disabled={!hasChanged || isSaving}
-                    className="bg-blue-600 text-white px-3 py-1 rounded"
-                >
-                    {isSaving ? 'Saving...' : justSaved ? 'Saved' : 'Update'}
-                </button>
-            </td>
-
         </tr>
     );
 });
