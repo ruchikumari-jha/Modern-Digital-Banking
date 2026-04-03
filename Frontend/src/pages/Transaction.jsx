@@ -41,7 +41,7 @@ const Transaction = () => {
         clearTimeout(debounceRef.current);
         debounceRef.current = setTimeout(() => {
             setActiveMonth(month);
-            setPage(1); // 🔥 reset page when filtering
+            setPage(1);
         }, 200);
     }, []);
 
@@ -92,7 +92,6 @@ const Transaction = () => {
         [processedTransactions, activeMonth]
     );
 
-    // ✅ FIXED: no frontend pagination
     const paginatedTransactions = filteredTransactions;
 
     const monthIncome = useMemo(() =>
@@ -116,17 +115,17 @@ const Transaction = () => {
             actions={
                 <button
                     onClick={handleExport}
-                    className="flex items-center gap-2 px-4 py-2.5 rounded-2xl text-sm font-bold bg-white border shadow-sm hover:shadow-md"
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-2xl text-sm font-bold bg-[#eab308] text-white shadow hover:opacity-90"
                 >
                     <Download className="w-4 h-4" />
                     Export CSV
                 </button>
             }
         >
-            <div className="bg-white rounded-3xl shadow border overflow-hidden mb-10">
+            <div className="bg-[#f6f1e7] rounded-3xl border border-[#e6d3a3] overflow-hidden mb-10">
 
                 {/* Month Selector */}
-                <div className="p-6 border-b">
+                <div className="p-6 border-b border-[#e6d3a3]">
                     <div className="grid grid-cols-4 sm:grid-cols-7 gap-3">
                         {MONTHS.map(month => (
                             <button
@@ -134,8 +133,8 @@ const Transaction = () => {
                                 onClick={() => handleMonthClick(month)}
                                 className={`px-3 py-3 rounded-2xl text-[11px] font-bold transition
                                     ${selectedMonth === month
-                                        ? 'bg-blue-600 text-white shadow'
-                                        : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
+                                        ? 'bg-[#eab308] text-white'
+                                        : 'bg-[#ede5d8] text-[#7a6a58]'
                                     }`}
                             >
                                 {month}
@@ -145,22 +144,22 @@ const Transaction = () => {
                 </div>
 
                 {/* Summary */}
-                <div className="p-6 border-b">
+                <div className="p-6 border-b border-[#e6d3a3]">
                     <div className="grid grid-cols-2 gap-4">
 
-                        <div className="flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-br from-green-50 to-green-100 shadow-sm">
-                            <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-green-200">💰</div>
+                        <div className="flex items-center gap-4 p-4 rounded-2xl bg-[#ede5d8]">
+                            <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-[#d6f5e8]">💰</div>
                             <div>
-                                <p className="text-xs text-gray-500">Money In</p>
-                                <p className="text-xl font-bold text-green-600">+₹{monthIncome}</p>
+                                <p className="text-xs text-[#7a6a58]">Money In</p>
+                                <p className="text-xl font-bold text-emerald-600">+₹{monthIncome}</p>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-br from-red-50 to-red-100 shadow-sm">
-                            <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-red-200">💸</div>
+                        <div className="flex items-center gap-4 p-4 rounded-2xl bg-[#ede5d8]">
+                            <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-[#fde2e2]">💸</div>
                             <div>
-                                <p className="text-xs text-gray-500">Money Out</p>
-                                <p className="text-xl font-bold text-red-500">-₹{monthExpense}</p>
+                                <p className="text-xs text-[#7a6a58]">Money Out</p>
+                                <p className="text-xl font-bold text-[#b91c1c]">-₹{monthExpense}</p>
                             </div>
                         </div>
 
@@ -170,57 +169,46 @@ const Transaction = () => {
                 {/* Transactions */}
                 <div className="p-4 space-y-3">
 
-                    {paginatedTransactions.length === 0 ? (
-                        <p className="text-center text-gray-400">No transactions</p>
-                    ) : (
-                        paginatedTransactions.map((t) => {
-                            const Icon = CATEGORY_ICONS[t.type] || Banknote;
+                    {paginatedTransactions.map((t) => {
+                        const Icon = CATEGORY_ICONS[t.type] || Banknote;
 
-                            return (
-                                <div
-                                    key={t.id}
-                                    className="flex items-center justify-between p-4 rounded-2xl border bg-white shadow-sm hover:shadow-md transition-all hover:-translate-y-1"
-                                >
-                                    <div className="flex items-center gap-4">
-                                        <div className={`w-12 h-12 flex items-center justify-center rounded-2xl
-                                            ${t.amount > 0 ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600'}`}>
-                                            <Icon className="w-5 h-5" />
-                                        </div>
-
-                                        <div>
-                                            <h4 className="font-semibold text-sm">{t.name}</h4>
-                                            <p className="text-xs text-gray-400">{t.date}</p>
-                                            <p className="text-xs text-gray-500">{t.type}</p>
-                                        </div>
+                        return (
+                            <div
+                                key={t.id}
+                                className="flex items-center justify-between p-4 rounded-2xl border border-[#e6d3a3] bg-[#f3ede3] hover:bg-[#efe6d6] transition"
+                            >
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 flex items-center justify-center rounded-2xl bg-[#e5e7eb] text-gray-600">
+                                        <Icon className="w-5 h-5" />
                                     </div>
 
-                                    <div className={`font-bold ${
-                                        t.amount > 0 ? 'text-green-600' : 'text-red-500'
-                                    }`}>
-                                        {t.amount > 0 ? '+' : '-'}₹{Math.abs(t.amount)}
+                                    <div>
+                                        <h4 className="font-semibold text-sm text-[#3b2f2f]">{t.name}</h4>
+                                        <p className="text-xs text-[#7a6a58]">{t.date}</p>
+                                        <p className="text-xs text-[#9a8b7a]">{t.type}</p>
                                     </div>
                                 </div>
-                            );
-                        })
-                    )}
+
+                                <div className={`font-bold ${
+                                    t.amount > 0 ? 'text-emerald-600' : 'text-[#3b2f2f]'
+                                }`}>
+                                    {t.amount > 0 ? '+' : ''}₹{Math.abs(t.amount)}
+                                </div>
+                            </div>
+                        );
+                    })}
 
                     {/* Pagination */}
                     <div className="flex justify-between mt-6 items-center">
-                        <button
-                            onClick={() => setPage(p => Math.max(1, p - 1))}
-                            disabled={page === 1}
-                        >
+                        <button onClick={() => setPage(p => Math.max(1, p - 1))}>
                             <ChevronLeft />
                         </button>
 
-                        <span className="text-sm text-gray-500">
+                        <span className="text-sm text-[#7a6a58]">
                             Page {page} / {totalPages}
                         </span>
 
-                        <button
-                            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                            disabled={page === totalPages}
-                        >
+                        <button onClick={() => setPage(p => Math.min(totalPages, p + 1))}>
                             <ChevronRight />
                         </button>
                     </div>
