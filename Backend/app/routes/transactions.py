@@ -1,6 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 import csv
+from datetime import datetime
+
 from app.database import get_db
 from app.schemas.transaction import TransactionCreate, RecategorizeRequest
 from app.services.transaction_service import (
@@ -8,28 +10,24 @@ from app.services.transaction_service import (
     recategorize_transaction_service
 )
 from app.models.transaction import Transaction
-from app.dependencies import get_current_user
 
 router = APIRouter(prefix="/transactions", tags=["Transactions"])
 
 
-# ✅ GET TRANSACTIONS (with pagination + filters)
+# ✅ GET TRANSACTIONS (NO AUTH → FIXED)
 @router.get("/")
 def get_transactions(
     account_id: int,
     page: int = 1,
-    limit: int = 1000,  # ✅ show more data
+    limit: int = 1000,
     search: str | None = None,
     category: str | None = None,
     db: Session = Depends(get_db),
-    current_user=Depends(get_current_user),  # ✅ secure
 ):
     skip = (page - 1) * limit
 
-    # ✅ Ensure user owns this account
     query = db.query(Transaction).filter(
-        Transaction.account_id == account_id,
-        Transaction.user_id == current_user.id  # 🔥 IMPORTANT
+        Transaction.account_id == account_id
     )
 
     if search:
@@ -51,12 +49,12 @@ def get_transactions(
     }
 
 
-# ✅ CREATE TRANSACTIONS (CSV IMPORT)
+# ✅ CSV IMPORT (FIXED FILE NAME + DATETIME)
 @router.post("/")
 def create_transactions_from_csv(
     db: Session = Depends(get_db),
 ):
-    with open("app/transactions_user15_account16.csv", "r") as file:
+    with open("app/transactions_user15_account1.csv", "r") as file:
         reader = csv.DictReader(file)
 
         for data in reader:
@@ -69,8 +67,8 @@ def create_transactions_from_csv(
                 currency=data["currency"],
                 txn_type=data["txn_type"],
                 merchant=data.get("merchant"),
-                txn_date=data["txn_date"],
-                posted_date=data["posted_date"],
+                txn_date=datetime.fromisoformat(data["txn_date"]),
+                posted_date=datetime.fromisoformat(data["posted_date"]) if data["posted_date"] else None,
             )
 
             create_transaction_service(txn, db)
@@ -78,18 +76,18 @@ def create_transactions_from_csv(
     return {"message": "Transactions imported successfully"}
 
 
-# ✅ RE-CATEGORIZE TRANSACTION (PATCH + PUT supported)
+# ✅ RE-CATEGORIZE (NO AUTH BLOCK)
 @router.patch("/{txn_id}/category")
 @router.put("/{txn_id}/category")
 def recategorize_transaction(
     txn_id: int,
     payload: RecategorizeRequest,
     db: Session = Depends(get_db),
-    current_user=Depends(get_current_user),
 ):
+    # ⚠️ NO USER CHECK (for now)
     return recategorize_transaction_service(
         txn_id,
         payload,
-        current_user,
-        db
+        current_user=None,
+        db=db
     )

@@ -46,7 +46,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:5173"],  # ✅ EXACT frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -58,7 +58,7 @@ app.add_middleware(
 # -------------------------------
 app.include_router(auth.router)
 app.include_router(accounts.router, prefix="/accounts", tags=["Accounts"])
-app.include_router(transactions.router, prefix="/transactions", tags=["Transactions"])
+app.include_router(transactions.router)
 app.include_router(budget_routes.router)
 app.include_router(reports.router)
 app.include_router(bills.router)

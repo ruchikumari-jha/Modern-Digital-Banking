@@ -27,16 +27,17 @@ def create_transaction_service(transaction, db: Session):
         category = transaction.category
 
     new_txn = Transaction(
-        account_id=transaction.account_id,
-        description=transaction.description,
-        category=category,
-        amount=transaction.amount,
-        currency=transaction.currency,
-        txn_type=transaction.txn_type,
-        merchant=transaction.merchant,
-        txn_date=transaction.txn_date,
-        posted_date=transaction.posted_date,
-    )
+    user_id=transaction.user_id,   
+    account_id=transaction.account_id,
+    description=transaction.description,
+    category=category,
+    amount=transaction.amount,
+    currency=transaction.currency,
+    txn_type=transaction.txn_type,
+    merchant=transaction.merchant,
+    txn_date=transaction.txn_date,
+    posted_date=transaction.posted_date,
+)
 
     db.add(new_txn)
 
@@ -68,8 +69,8 @@ def recategorize_transaction_service(
 
     account = db.query(Account).filter(Account.id == txn.account_id).first()
 
-    if account.user_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Unauthorized")
+    if not account:
+        raise HTTPException(status_code=404, detail="Account not found")
 
     if not payload.category or payload.category.strip() == "":
         raise HTTPException(status_code=400, detail="Invalid category")
