@@ -10,12 +10,18 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from fastapi.middleware.cors import CORSMiddleware
 
 
-# Database
+# Database & Models
 from app.database import Base, engine, SessionLocal
-Base.metadata.create_all(bind=engine)
+from app import models  # Register models with SQLAlchemy Base
 
-# Models (register with SQLAlchemy)
-from app import models
+if engine:
+    try:
+        print("Initializing database tables...")
+        Base.metadata.create_all(bind=engine)
+    except Exception as e:
+        print(f"DATABASE INITIALIZATION ERROR: {e}")
+else:
+    print("WARNING: Skipping database table initialization because engine is None.")
 
 # Routers
 from app.routes import (
