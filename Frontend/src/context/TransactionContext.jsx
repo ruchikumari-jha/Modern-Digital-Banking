@@ -5,7 +5,7 @@ const TransactionContext = createContext();
 
 export const useTransactions = () => useContext(TransactionContext);
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 const REQUEST_TIMEOUT = 8000;
 
 export const TransactionProvider = ({ children }) => {

@@ -1,11 +1,11 @@
-
+import os
 from datetime import datetime, timedelta
 from jose import jwt,JWTError
 from fastapi import Depends,HTTPException
 from fastapi.security import OAuth2PasswordBearer
 
 
-SECRET_KEY = "90282c1f249a3ecf19403f0cd9dccc63adc089a7402bac1debf003df02121e01"
+SECRET_KEY = os.getenv("SECRET_KEY", "90282c1f249a3ecf19403f0cd9dccc63adc089a7402bac1debf003df02121e01")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 REFRESH_TOKEN_EXPRIE_DAYS = 7

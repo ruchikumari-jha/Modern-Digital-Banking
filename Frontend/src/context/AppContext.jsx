@@ -76,7 +76,7 @@ const ThemeContext = createContext(null);
 // ─────────────────────────────── PROVIDER ───────────────────────────────────
 
 export function AppProvider({ children }) {
-    const API_BASE_URL = 'http://localhost:8000';
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
     // ── User & Account ──
     const [user, setUser] = useState(null);

@@ -19,7 +19,7 @@ const RecentTransactions = () => {
             const token = localStorage.getItem("access_token");
             if (token) userId = JSON.parse(atob(token.split(".")[1])).user_id;
         } catch (e) {}
-        window.open(`http://localhost:8000/export/transactions?format=csv&user_id=${userId}`);
+        window.open(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:8000"}/export/transactions?format=csv&user_id=${userId}`);
     };
 
     return (

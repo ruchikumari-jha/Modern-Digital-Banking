@@ -135,7 +135,7 @@ const Reports = () => {
   try {
     const token = localStorage.getItem("access_token");
 
-    const res = await axios.get("http://localhost:8000/alerts/", {
+    const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:8000"}/alerts/`, {
       params: { user_id: getUserIdFromToken() },
       headers: {
         Authorization: `Bearer ${token}`,
@@ -154,7 +154,7 @@ useEffect(() => {
   try {
     const token = localStorage.getItem("access_token");
 
-    await axios.post("http://localhost:8000/alerts/mark-read", null, {
+    await axios.post(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:8000"}/alerts/mark-read`, null, {
       params: { alert_id: id },
       headers: {
         Authorization: `Bearer ${token}`,
@@ -170,7 +170,7 @@ useEffect(() => {
   try {
     const token = localStorage.getItem("access_token");
 
-    await axios.post("http://localhost:8000/alerts/mark-all-read", null, {
+    await axios.post(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:8000"}/alerts/mark-all-read`, null, {
       params: { user_id: getUserIdFromToken() },
       headers: {
         Authorization: `Bearer ${token}`,
@@ -200,7 +200,7 @@ useEffect(() => {
             : Number(selectedYear);
 
         const res = await axios.get(
-          "http://localhost:8000/reports/spending-by-category",
+          `${import.meta.env.VITE_API_BASE_URL || "http://localhost:8000"}/reports/spending-by-category`,
           {
             params: { month, year },
             headers: {
@@ -226,7 +226,7 @@ setAllTransactionsData(converted);
         const token = localStorage.getItem("access_token");
         const userId = getUserIdFromToken();
         if (userId) {
-          const resCashflow = await axios.get("http://localhost:8000/insights/cashflow", {
+          const resCashflow = await axios.get(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:8000"}/insights/cashflow`, {
             params: { user_id: userId },
             headers: { Authorization: `Bearer ${token}` }
           });

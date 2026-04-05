@@ -5,7 +5,7 @@ import AppLayout from '../components/AppLayout';
 
 const MONTHS = ['All', 'Dec', 'Nov', 'Oct', 'Sep', 'Aug', 'Jul', 'Jun', 'May', 'Apr', 'Mar', 'Feb', 'Jan'];
 const PAGE_SIZE = 8;
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
 const CATEGORY_ICONS = {
     Food: Utensils,

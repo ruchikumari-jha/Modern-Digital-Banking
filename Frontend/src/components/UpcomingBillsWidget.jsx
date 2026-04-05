@@ -19,7 +19,7 @@ const UpcomingBillsWidget = () => {
                 return;
             }
             try {
-                const res = await fetch(`http://localhost:8000/bills/user/${user.id}`);
+                const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:8000"}/bills/user/${user.id}`);
                 if (res.ok) {
                     const data = await res.json();
                     const mappedBills = data.map(b => {

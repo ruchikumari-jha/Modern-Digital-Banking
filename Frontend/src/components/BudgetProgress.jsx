@@ -4,7 +4,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { Loader2, AlertCircle } from 'lucide-react';
 import { useBudgets, useUser } from '../context/AppContext';
 
-const BASE_URL = "http://localhost:8000";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
 const PALETTE = [
     '#3B82F6', // Blue

@@ -100,7 +100,7 @@ const fetchBills = async () => {
     if (editingBill) {
      
       await axios.put(
-        `http://localhost:8000/bills/${editingBill.id}`,
+        `${import.meta.env.VITE_API_BASE_URL || "http://localhost:8000"}/bills/${editingBill.id}`,
         {
           biller_name: formData.name,
           due_date: formData.dueDate,
@@ -112,7 +112,7 @@ const fetchBills = async () => {
           fetchBills();
 
     } else {
-    await axios.post("http://localhost:8000/bills/", {
+    await axios.post(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:8000"}/bills/`, {
       user_id: user.id,
       account_id: account.id,
       biller_name: formData.name,
@@ -153,7 +153,7 @@ const fetchBills = async () => {
     const deleteBill = async (id) => {
   try {
     await axios.delete(
-      `http://localhost:8000/bills/${id}`
+      `${import.meta.env.VITE_API_BASE_URL || "http://localhost:8000"}/bills/${id}`
     );
 
     fetchBills();
@@ -166,7 +166,7 @@ const fetchBills = async () => {
    const toggleStatus = async (id) => {
   try {
     await axios.put(
-      `http://localhost:8000/bills/pay/${id}`
+      `${import.meta.env.VITE_API_BASE_URL || "http://localhost:8000"}/bills/pay/${id}`
     );
 
     fetchBills();

@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+gunicorn
+sqlalchemy
+psycopg2-binary
+python-dotenv
+apscheduler
+argon2-cffi
+python-jose[cryptography]
+python-multipart
+reportlab

@@ -39,7 +39,7 @@ const Unlock = () => {
         }
         try{
             const token = localStorage.getItem("access_token");
-            const respose = await axios.post("http://localhost:8000/accounts/accounts",{
+            const respose = await axios.post(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:8000"}/accounts/accounts`,{
                 "bank_name":selectedBank,
                 "account_type":accountType,
                 "account_number":inputAccountNo,
