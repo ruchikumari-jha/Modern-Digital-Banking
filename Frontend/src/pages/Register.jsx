@@ -84,6 +84,11 @@ const Register = () => {
             navigate('/unlock'); 
         }catch(err){
             console.log(err);
+            if (err.response && err.response.data && err.response.data.detail) {
+                setError(err.response.data.detail);
+            } else {
+                setError("Registration failed. Please try again.");
+            }
         }
 
         // alert("Registration successful! Proceeding to Account Setup.");

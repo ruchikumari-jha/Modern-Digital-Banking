@@ -60,6 +60,11 @@ const LoginForm = () => {
         navigate('/dashboard');
     }catch(err){
         console.log(err);
+        if (err.response && err.response.data && err.response.data.detail) {
+            setError(err.response.data.detail);
+        } else {
+            setError("Login failed. Please check your email and password.");
+        }
     }
 
        
